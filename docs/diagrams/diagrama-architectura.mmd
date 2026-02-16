@@ -1,0 +1,63 @@
+```mermaid
+flowchart TD
+    Start([main.py<br/>Punto de Entrada]) --> App[gui/app.py<br/>AplicacionCSE]
+    
+    App --> Header[_build_header<br/>Título e Información]
+    App --> TabIntegrantes[_build_tab_integrantes<br/>Pestaña Integrantes]
+    App --> TabMedios[_build_tab_medios<br/>Pestaña Test de Medios]
+    App --> TabResultados[_build_tab_resultados<br/>Pestaña Resultados]
+    App --> Footer[_build_footer<br/>Botón Calcular]
+    
+    TabIntegrantes --> IntegranteFrame[gui/integrante_frame.py<br/>IntegranteFrame]
+    IntegranteFrame --> CoefData[(calculator/coefficients.py<br/>obtener_rango_edad<br/>obtener_opciones_discapacidad)]
+    IntegranteFrame --> CollectData[obtener_datos<br/>Retorna dict con:<br/>nombre, edad, condicion<br/>estudia, ingresos]
+    
+    TabMedios --> MediosFrame[gui/medios_frame.py<br/>TestMediosFrame]
+    MediosFrame --> CollectMedios[obtener_datos<br/>Retorna dict con:<br/>flags de tests]
+    
+    Footer --> Calculate[_calcular<br/>Ejecuta Cálculo]
+    
+    Calculate --> Step1[PASO 1:<br/>Ingreso Equivalente]
+    Step1 --> CalcIncome[calculator/income.py<br/>calcular_ingreso_equivalente]
+    CalcIncome --> Constants1[(constants.py<br/>SALARIO_MINIMO)]
+    
+    Calculate --> Step2[PASO 2:<br/>Índice de Necesidades]
+    Step2 --> CalcNeeds[calculator/needs_index.py<br/>calcular_indice_necesidades]
+    CalcNeeds --> CoefCalc[(calculator/coefficients.py<br/>COEFICIENTES)]
+    CalcNeeds --> Constants2[(constants.py<br/>FACTOR_ESCALA)]
+    
+    Calculate --> Step3[PASO 3:<br/>Ingreso Corregido]
+    Step3 --> CalcCorrected[calculator/needs_index.py<br/>calcular_ingreso_corregido]
+    
+    Calculate --> Step4[PASO 4:<br/>Tramo por Ingresos]
+    Step4 --> CalcTramo[calculator/income.py<br/>determinar_tramo_por_ingreso]
+    CalcTramo --> Constants3[(constants.py<br/>UMBRALES_INGRESO)]
+    
+    Calculate --> Step5[PASO 5:<br/>Test de Medios]
+    Step5 --> EvalMedios[calculator/means_test.py<br/>evaluar_test_medios]
+    
+    CalcIncome --> ReportGen[gui/report.py<br/>generar_reporte]
+    CalcNeeds --> ReportGen
+    CalcCorrected --> ReportGen
+    CalcTramo --> ReportGen
+    EvalMedios --> ReportGen
+    
+    ReportGen --> Constants4[(constants.py<br/>TRAMO_DESCRIPCIONES)]
+    
+    ReportGen --> Sections[Secciones del Reporte:<br/>_seccion_ingreso_equivalente<br/>_seccion_indice_necesidades<br/>_seccion_ingreso_corregido<br/>_seccion_tramo_ingreso<br/>_seccion_test_medios<br/>_seccion_resultado_final]
+    
+    Sections --> Display[Mostrar en<br/>resultado_text<br/>Widget de Texto]
+    
+    Display --> End([Usuario ve<br/>Resultado CSE])
+    
+    style Start fill:#e1f5e1
+    style End fill:#e1f5e1
+    style App fill:#fff4e6
+    style Calculate fill:#ffe6e6
+    style ReportGen fill:#e6f3ff
+    style CalcIncome fill:#f0e6ff
+    style CalcNeeds fill:#f0e6ff
+    style CalcCorrected fill:#f0e6ff
+    style CalcTramo fill:#f0e6ff
+    style EvalMedios fill:#f0e6ff
+```
